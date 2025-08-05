@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const VERIFY_TOKEN = 'verifica123';
+const VERIFY_TOKEN = 'meu_token_verificacao'; // Coloque aqui o MESMO TOKEN que você colocará no Meta
 
 // Webhook - verificação de token da Meta
 app.get('/webhook', (req, res) => {
