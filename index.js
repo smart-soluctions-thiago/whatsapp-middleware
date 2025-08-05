@@ -1,31 +1,30 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+const VERIFY_TOKEN = 'verifica123';
 
-// Rota para verificação do webhook (GET)
+// Webhook - verificação de token da Meta
 app.get('/webhook', (req, res) => {
-  const VERIFY_TOKEN = process.env.VERIFY_TOKEN || 'meu_token_secreto';
-
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  if (mode && token && mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('WEBHOOK VERIFICADO');
+  if (mode && token === VERIFY_TOKEN) {
+    console.log('WEBHOOK_VERIFICADO');
     res.status(200).send(challenge);
   } else {
     res.sendStatus(403);
   }
 });
 
-// Rota para receber mensagens (POST)
+// Webhook - recebimento de mensagens
+app.use(express.json());
 app.post('/webhook', (req, res) => {
   console.log('Mensagem recebida:', JSON.stringify(req.body, null, 2));
   res.sendStatus(200);
 });
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
