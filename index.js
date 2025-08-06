@@ -1,39 +1,38 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-
+const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+
 app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 3000;
-const VERIFY_TOKEN = "verifica123"; // esse é o mesmo que você colocou no Meta
+const VERIFY_TOKEN = 'verifica123';
 
-// Verificação inicial (GET)
-app.get("/webhook", (req, res) => {
-  const mode = req.query["hub.mode"];
-  const token = req.query["hub.verify_token"];
-  const challenge = req.query["hub.challenge"];
+// Rota de verificação do webhook (GET)
+app.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
 
   if (mode && token === VERIFY_TOKEN) {
-    console.log("🔐 Verificação do webhook bem-sucedida!");
+    console.log('🟢 WEBHOOK VERIFICADO');
     res.status(200).send(challenge);
   } else {
-    console.warn("❌ Falha na verificação do webhook");
+    console.log('🔴 FALHA NA VERIFICAÇÃO DO WEBHOOK');
     res.sendStatus(403);
   }
 });
 
-// Recebimento de mensagens (POST)
-app.post("/webhook", (req, res) => {
+// Rota para receber mensagens do webhook (POST)
+app.post('/webhook', (req, res) => {
   const body = req.body;
 
-  if (body.object) {
-    console.log("📥 Webhook recebido:");
-    console.dir(body, { depth: null });
-    res.sendStatus(200); // envia confirmação pro Meta
-  } else {
-    res.sendStatus(404);
-  }
+  console.log('📩 Requisição recebida do Webhook:');
+  console.dir(body, { depth: null });
+
+  res.sendStatus(200); // Confirma recebimento ao Meta
 });
+
+// 🔧 Use a porta do Render ou 3000 localmente
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Middleware rodando na porta ${PORT}`);
